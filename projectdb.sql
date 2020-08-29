@@ -1,0 +1,15 @@
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+CREATE TABLE `ders` (`Ders_id` int(11) NOT NULL, `Ders_adi` varchar(255) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `konu` (`Konu_id` int(11) NOT NULL, `Konu_adi` varchar(255) NOT NULL, `Donem` TINYINT NOT NULL, `Ders_Konu_id` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE `soru` (`Soru_id` int(11) NOT NULL, `Soru_icerik` text NOT NULL, `Soru_Konu_id` int(11) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+ALTER TABLE `ders`  ADD PRIMARY KEY (`Ders_id`), ADD KEY `Ders_id` (`Ders_id`);
+ALTER TABLE `konu`  ADD PRIMARY KEY (`Konu_id`),  ADD KEY `Konu_id` (`Konu_id`,`Ders_Konu_id`),  ADD KEY `Ders_Konu_id` (`Ders_Konu_id`);
+ALTER TABLE `soru`  ADD PRIMARY KEY (`Soru_id`),  ADD KEY `Soru_id` (`Soru_id`,`Soru_Konu_id`),  ADD KEY `Soru_Konu_id` (`Soru_Konu_id`);
+ALTER TABLE `ders`  MODIFY `Ders_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `konu`  MODIFY `Konu_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `soru`  MODIFY `Soru_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `konu`  ADD CONSTRAINT `konu_ibfk_1` FOREIGN KEY (`Ders_Konu_id`) REFERENCES `ders` (`Ders_id`);
+ALTER TABLE `soru`  ADD CONSTRAINT `soru_ibfk_1` FOREIGN KEY (`Soru_Konu_id`) REFERENCES `konu` (`Konu_id`);
+COMMIT;
