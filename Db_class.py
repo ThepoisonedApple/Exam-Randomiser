@@ -176,12 +176,21 @@ class Db_Class(object):
 			return x
 		except Exception as e:
 			raise e
-	def save_image(self):
+	def Soru_update(self,sid,kid,stext):
 		try:
-			sql="INSERT INTO `deneme` (`id`, `resim`) VALUES (%s,LOAD_FILE('%s'));"
-			val=(None,"loading.png")
+			sql="UPDATE soru SET Soru_Konu_id=%s , Soru_icerik=%s WHERE Soru_id=%s;"
+			val=(kid,stext,sid)
 			self.mycursor.execute(sql,val)
 			self.mydb.commit()
+		except Exception as e:
+			raise e
+	def Soru_search(self,stext,konutext):
+		try:
+			sql="SELECT soru.Soru_id,ders.Ders_adi,konu.Konu_adi,soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE soru.Soru_icerik LIKE '%s' AND konu.Konu_adi LIKE '%s'"
+			val=("%"+stext+"%","%"+konutext+"%")
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()			
+			return x
 		except Exception as e:
 			raise e
 #	def main(self):s

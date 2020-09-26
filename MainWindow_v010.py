@@ -217,8 +217,51 @@ class Ui_MainWindow(QMainWindow):
 		self.Q_table.verticalHeader().setCascadingSectionResizes(False)
 		self.Q_table.verticalHeader().setHighlightSections(False)
 		self.Q_table.verticalHeader().setStretchLastSection(True)
-		self.Q_table.setSortingEnabled(False)
+		self.Q_table.setHorizontalHeaderLabels(["ID","Ders Adı","Konu Adı","Soru"])
+		self.Q_table.setColumnHidden(0,True)
+		self.Q_table.setSortingEnabled(True)
+	#region search question
 
+		self.addQ_s_lsoru=QtWidgets.QLabel(self.addQ_topframe)
+		self.addQ_s_lsoru.setGeometry(QtCore.QRect(10, 312, 120, 35))
+		self.addQ_s_lsoru.setLayoutDirection(QtCore.Qt.RightToLeft)
+		self.addQ_s_lsoru.setFont(QtGui.QFont("Verdana", 10,QtGui.QFont.Bold))
+		self.addQ_s_lsoru.setStyleSheet("color:White;")
+		self.addQ_s_lsoru.setText("Soru içeriği:")
+		self.addQ_s_lsoru.setScaledContents(True)
+		self.addQ_s_lsoru.setObjectName("addQ_s_lsoru")
+
+		self.addQ_s_tbsoru = QtWidgets.QLineEdit(self.addQ_topframe)
+		self.addQ_s_tbsoru.setGeometry(QtCore.QRect(135, 315, 250, 30))
+		self.addQ_s_tbsoru.setPlaceholderText("Soru içeriği..")
+		self.addQ_s_tbsoru.setFocusPolicy(Qt.StrongFocus)
+		self.addQ_s_tbsoru.setFont(QtGui.QFont("Verdana", 10))
+		self.addQ_s_tbsoru.setStyleSheet(Style.lineedit_style)
+
+		self.addQ_s_lkonu=QtWidgets.QLabel(self.addQ_topframe)
+		self.addQ_s_lkonu.setGeometry(QtCore.QRect(400, 312, 90, 35))
+		self.addQ_s_lkonu.setLayoutDirection(QtCore.Qt.RightToLeft)
+		self.addQ_s_lkonu.setFont(QtGui.QFont("Verdana", 10,QtGui.QFont.Bold))
+		self.addQ_s_lkonu.setStyleSheet("color:White;")
+		self.addQ_s_lkonu.setText("konu:")
+		self.addQ_s_lkonu.setScaledContents(True)
+		self.addQ_s_lkonu.setObjectName("addQ_s_lkonu")
+
+		self.addQ_s_tbkonu = QtWidgets.QLineEdit(self.addQ_topframe)
+		self.addQ_s_tbkonu.setGeometry(QtCore.QRect(465, 315, 250, 30))
+		self.addQ_s_tbkonu.setPlaceholderText("konu adı..")
+		self.addQ_s_tbkonu.setFocusPolicy(Qt.StrongFocus)
+		self.addQ_s_tbkonu.setFont(QtGui.QFont("Verdana", 10))
+		self.addQ_s_tbkonu.setStyleSheet(Style.lineedit_style)	
+
+		self.addQ_i_binsert = QtWidgets.QPushButton(self.addQ_topframe)
+		self.addQ_i_binsert.setGeometry(QRect(750,315,70,30))
+		self.addQ_i_binsert.setStyleSheet(Style.ok_button)
+		self.addQ_i_binsert.setText("Ara")
+		#self.addQ_i_binsert.clicked.connect(self.Soru_ekle)
+
+	#endregion
+	#region insert question
 		self.addQ_i_cbders = QtWidgets.QComboBox(self.addQ_insert)
 		self.addQ_i_cbders.setGeometry(QRect(20,10,200,35))
 		self.addQ_i_cbders.setFont(QtGui.QFont("Verdana", 9))
@@ -248,6 +291,48 @@ class Ui_MainWindow(QMainWindow):
 		self.addQ_i_binsert.setStyleSheet(Style.ok_button)
 		self.addQ_i_binsert.setText("ok")
 		self.addQ_i_binsert.clicked.connect(self.Soru_ekle)
+	#endregion
+	#region update question
+		
+		self.Q_table.itemSelectionChanged.connect(self.fill_addQ_updatetab)
+
+		self.addQ_u_tbid=QLineEdit(self.addQ_update)
+		self.addQ_u_tbid.setGeometry(QRect(20,10,80,35))
+		self.addQ_u_tbid.setFocusPolicy(Qt.StrongFocus)
+		self.addQ_u_tbid.setFont(QtGui.QFont("Verdana", 11))
+		self.addQ_u_tbid.setStyleSheet(Style.lineedit_style)
+		self.addQ_u_tbid.setReadOnly(True)
+
+		self.addQ_u_cbders = QtWidgets.QComboBox(self.addQ_update)
+		self.addQ_u_cbders.setGeometry(QRect(120,10,200,35))
+		self.addQ_u_cbders.setFont(QtGui.QFont("Verdana", 9))
+		self.addQ_u_cbders.setAutoFillBackground(False)
+		self.addQ_u_cbders.setIconSize(QtCore.QSize(16, 16))
+		self.addQ_u_cbders.setFrame(True)
+		self.addQ_u_cbders.setStyleSheet(Style.combobox_style)
+		self.addQ_u_cbders.activated['int'].connect(self.activated_addQ_u_cbders)
+
+		self.addQ_u_cbkonu = QtWidgets.QComboBox(self.addQ_update)
+		self.addQ_u_cbkonu.setGeometry(QRect(385,10,200,35))
+		self.addQ_u_cbkonu.setFont(QtGui.QFont("Verdana", 9))
+		self.addQ_u_cbkonu.setAutoFillBackground(False)
+		self.addQ_u_cbkonu.setStyleSheet(Style.combobox_style)
+		self.addQ_u_cbkonu.setIconSize(QtCore.QSize(16, 16))
+		self.addQ_u_cbkonu.setFrame(True)
+
+		self.addQ_u_tbsoru = QtWidgets.QPlainTextEdit(self.addQ_update)
+		self.addQ_u_tbsoru.setGeometry(QRect(20, 60 ,700 ,210))
+		self.addQ_u_tbsoru.setFocusPolicy(Qt.StrongFocus)
+		self.addQ_u_tbsoru.setFont(QtGui.QFont("Verdana", 11))
+		self.addQ_u_tbsoru.setStyleSheet(Style.plaintextedit_style)
+
+		self.addQ_u_binsert = QtWidgets.QPushButton(self.addQ_update)
+		self.addQ_u_binsert.setGeometry(QRect(740,200,100,100))
+		self.addQ_u_binsert.setStyleSheet(Style.ok_button)
+		self.addQ_u_binsert.setText("ok")
+		self.addQ_u_binsert.clicked.connect(self.soru_guncelle)
+
+	#endregion
 #endregion
 
 
@@ -306,7 +391,8 @@ class Ui_MainWindow(QMainWindow):
 		self.L_table.verticalHeader().setCascadingSectionResizes(False)
 		self.L_table.verticalHeader().setHighlightSections(False)
 		self.L_table.verticalHeader().setStretchLastSection(True)
-		self.L_table.setSortingEnabled(False)
+		self.L_table.setSortingEnabled(True)
+		self.L_table.setColumnHidden(0, True);
 		#region ders ara
 
 		self.addL_searchtab_icon = QtWidgets.QLabel(self.addL_searchtab)
@@ -447,7 +533,8 @@ class Ui_MainWindow(QMainWindow):
 		self.S_table.verticalHeader().setCascadingSectionResizes(False)
 		self.S_table.verticalHeader().setHighlightSections(False)
 		self.S_table.verticalHeader().setStretchLastSection(True)
-		self.S_table.setSortingEnabled(False)
+		self.S_table.setSortingEnabled(True)
+		self.S_table.setColumnHidden(0, True);
 
 		#region konu search
 		self.addS_searchtab_tbara=QLineEdit(self.addS_searchtab)
@@ -770,9 +857,11 @@ class Ui_MainWindow(QMainWindow):
 		self.b_setting.setStyleSheet(Style.menu_button)
 		if self.myclass.Db_Status==1:
 			self.get_data()
-			self.fill_table_soru()
+			self.fill_table_soru_onstart()
 			self.fill_cbders(self.addQ_i_cbders)
-			self.fill_cbkonu(self.addQ_i_cbkonu)
+			self.fill_cbkonu(self.addQ_i_cbkonu,self.addQ_i_cbders)
+			self.fill_cbders(self.addQ_u_cbders)
+			self.fill_cbkonu(self.addQ_u_cbkonu,self.addQ_u_cbders)
 	def b_addLS_onclick(self):
 		self.maintabs.setCurrentIndex(2)
 		if self.isextended==1:
@@ -806,6 +895,7 @@ class Ui_MainWindow(QMainWindow):
 		self.fill_table_konu(self.List_Konu)
 
 	def fill_table_ders(self,mylist):
+		self.L_table.setSortingEnabled(False)
 		self.L_table.setRowCount(len(mylist)+1)
 		if len(mylist)>=1:
 			for i in range(len(mylist)):
@@ -815,7 +905,9 @@ class Ui_MainWindow(QMainWindow):
 				x=QtWidgets.QTableWidgetItem(str(mylist[i][1]) )
 				x.setForeground(QBrush(QColor(255, 255, 255)))
 				self.L_table.setItem(i , 1 , x )
+		self.L_table.setSortingEnabled(True)
 	def fill_table_konu(self,mylist):
+		self.S_table.setSortingEnabled(False)
 		self.S_table.setRowCount(len(mylist)+1)
 		if len(mylist)>=1:
 			for i in range(len(mylist)):
@@ -834,8 +926,9 @@ class Ui_MainWindow(QMainWindow):
 				x=QtWidgets.QTableWidgetItem(str(mylist[i][3]) )
 				x.setForeground(QBrush(QColor(255, 255, 255)))
 				self.S_table.setItem(i , 3 , x )
-	def fill_table_soru(self):
-		sorular=self.myclass.Soru_get_all()
+		self.S_table.setSortingEnabled(True)
+	def fill_table_soru(self,sorular):
+		self.Q_table.setSortingEnabled(False)
 		if len(sorular)>=1:
 			self.Q_table.setRowCount(len(sorular)+1)
 			for i in range(len(sorular)):
@@ -852,7 +945,10 @@ class Ui_MainWindow(QMainWindow):
 				x.setForeground(QBrush(QColor(255, 255, 255)))
 				self.Q_table.setItem(i , 3 , x )
 			del sorular
-
+		self.Q_table.setSortingEnabled(True)
+	def fill_table_soru_onstart(self):
+		sorular=self.myclass.Soru_get_all()
+		self.fill_table_soru(sorular)
 
 #endregion
 
@@ -916,6 +1012,24 @@ class Ui_MainWindow(QMainWindow):
 #region soru functions
 	def Soru_ekle(self):
 		self.myclass.Soru_insert(self.addQ_i_cbkonu.currentData(),self.addQ_i_tbsoru.toPlainText())
+	def fill_addQ_updatetab(self):
+		if self.Q_table.item(self.Q_table.currentRow(),0) != None:
+			self.addQ_u_tbid.setText(self.Q_table.item(self.Q_table.currentRow(),0).text())
+			x=self.addQ_u_cbders.findText(self.Q_table.item(self.Q_table.currentRow(),1).text())
+			self.addQ_u_cbders.setCurrentIndex(x)
+			self.fill_cbkonu(self.addQ_u_cbkonu,self.addQ_u_cbders)
+			x=self.addQ_u_cbkonu.findText(self.Q_table.item(self.Q_table.currentRow(),2).text())
+			self.addQ_u_cbkonu.setCurrentIndex(x)
+			self.addQ_u_tbsoru.setPlainText(self.Q_table.item(self.Q_table.currentRow(),3).text())
+	def soru_guncelle(self):
+		if self.addQ_u_tbid.text() != "" and self.addQ_u_tbsoru.toPlainText() != "" and self.addQ_u_cbkonu.currentData()!=-1 and self.addQ_u_cbders.currentData()!=-1:
+			self.myclass.Soru_update(self.addQ_u_tbid.text(),self.addQ_u_cbkonu.currentData(),self.addQ_u_tbsoru.toPlainText())
+			self.addQ_u_cbders.setCurrentIndex(0)
+			self.addQ_u_cbkonu.setCurrentIndex(0)
+			self.addQ_u_tbsoru.setPlainText("")
+			self.addQ_u_tbid.setText("")
+			self.activated_addQ_u_cbders()
+			self.b_addQ_onclick()
 
 #endregion
 
@@ -930,17 +1044,20 @@ class Ui_MainWindow(QMainWindow):
 		else:
 			cb.addItem("Ders Ekleyiniz..",-1)
 
-	def fill_cbkonu(self,cb):
-		if self.myclass.Db_Status == 1 and len(self.List_Ders)>=1 and self.addQ_i_cbders.currentData()!=-1:
-			List_Ders_Konu=self.myclass.Konu_get(self.addQ_i_cbders.currentData())
+	def fill_cbkonu(self,targetcb,triggercb):
+		if self.myclass.Db_Status == 1 and len(self.List_Ders)>=1 and triggercb.currentData()!=-1:
+			List_Ders_Konu=self.myclass.Konu_get(triggercb.currentData())
 			if len(List_Ders_Konu) >= 1:
 				for i in List_Ders_Konu:
-					cb.addItem(i[1],i[0])
+					targetcb.addItem(i[1],i[0])
 			else:
-				cb.addItem("Konu Ekleyiniz")
+				targetcb.addItem("Konu Ekleyiniz",-1)
 	def activated_addQ_i_cbders(self):
 		self.addQ_i_cbkonu.clear()
-		self.fill_cbkonu(self.addQ_i_cbkonu)
+		self.fill_cbkonu(self.addQ_i_cbkonu,self.addQ_i_cbders)
+	def activated_addQ_u_cbders(self):
+		self.addQ_u_cbkonu.clear()
+		self.fill_cbkonu(self.addQ_u_cbkonu,self.addQ_u_cbders)
 
 #endregion
 
