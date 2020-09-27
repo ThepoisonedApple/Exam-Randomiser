@@ -1,15 +1,11 @@
-from PyQt5.QtWidgets import (QMessageBox,QApplication, QWidget, QToolTip, QPushButton,
-							QDesktopWidget, QMainWindow, QAction, qApp, QToolBar, QVBoxLayout,
-							QComboBox,QLabel,QLineEdit,QGridLayout,QMenuBar,QMenu,QStatusBar,
-							QTextEdit,QDialog,QFrame,QProgressBar,QAbstractButton,QTabWidget
-							)
+from PyQt5.QtWidgets import QWidget,QDesktopWidget, QMainWindow,QLineEdit,QTabWidget
 from PyQt5 import QtCore, QtWidgets, QtGui
-from PyQt5.QtGui import QIcon,QFont,QPixmap,QPalette,QPainter, QBrush, QPen, QColor
-from PyQt5.QtCore import pyqtSlot, QCoreApplication, Qt,QBasicTimer, QPoint, QObject, pyqtSignal, QEvent ,QSize,QRect,QThread
-import sys
+from PyQt5.QtGui import QIcon,QBrush, QColor
+from PyQt5.QtCore import Qt, QPoint,QSize,QRect
+from PyQt5.QtChart import QChart,QChartView,QPieSeries
+import sys,time
 from Db_class import Db_Class
 from ui_styles import Style
-import time
 from threading import Thread
 
 class Ui_MainWindow(QMainWindow):
@@ -151,20 +147,47 @@ class Ui_MainWindow(QMainWindow):
 		self.t_author.setFont(QtGui.QFont("Verdana", 8, QtGui.QFont.Bold))
 		self.t_author.setStyleSheet('color: White')
 
-		self.checkdb()
+		self.checkdb_1()
 		timer = QtCore.QTimer(self, timeout=self.checkdb, interval=6000)
 		timer.start()
 #endregion
 
 #region tab=0 home page
+		self.mypiel=QtWidgets.QWidget(self.home)
+		self.mypiel.setGeometry(QRect(10,10,450,450))
+		self.mypiel.setContentsMargins(QtCore.QMargins(0,0,0,0))
+		self.seriesl=self.get_pie_series()
+		self.seriesl.setLabelsVisible(True)
+		self.seriesl.setLabelsPosition(0)
+		self.seriesl.slices()[0].setExploded(True)
+		self.seriesl.clicked.connect(self.slice_clicked)
+		self.chartl=QChart()
+		self.chartl.addSeries(self.seriesl)
+		self.chartl.setTheme(0)
+		self.chartl.setContentsMargins(0,0,0,0)
+		self.chartl.setAnimationOptions(QChart.SeriesAnimations)
+		self.chartl.legend().hide()
+		self.chartviewl=QChartView(self.chartl,self.mypiel)
+		self.chartviewl.setGeometry(QRect(0,0,450,450))
 
-		self.tcheckdb = QtWidgets.QLabel(self.home)
-		self.tcheckdb.setGeometry(QtCore.QRect(300, 200, 400, 400))
-		self.tcheckdb.setLayoutDirection(QtCore.Qt.RightToLeft)
-		self.tcheckdb.setText("Home")
-		self.tcheckdb.setObjectName("tcheckdb")
-		self.tcheckdb.setFont(QtGui.QFont("Verdana", 30, QtGui.QFont.Bold))
-		self.tcheckdb.setStyleSheet('color: White')
+
+		self.mypies=QtWidgets.QWidget(self.home)
+		self.mypies.setGeometry(QRect(460,10,450,450))
+		self.mypies.setContentsMargins(QtCore.QMargins(0,0,0,0))
+		self.seriess=self.get_pie_seriess(self.seriesl.slices()[0].label())
+		self.seriess.setLabelsVisible(True)
+		self.seriess.setLabelsPosition(0)
+		self.seriess.clicked.connect(self.slices_clicked)
+		self.charts=QChart()
+		self.charts.addSeries(self.seriess)
+		self.charts.setTheme(0)
+		self.charts.setContentsMargins(0,0,0,0)
+		self.charts.setAnimationOptions(QChart.SeriesAnimations)
+		self.charts.legend().hide()
+		self.chartviews=QChartView(self.charts,self.mypies)
+		self.chartviews.setGeometry(QRect(0,0,450,450))
+
+
 #endregion
 
 #region tab=1 soru ekle-düzenle page
@@ -847,6 +870,12 @@ class Ui_MainWindow(QMainWindow):
 		self.b_addQ.setStyleSheet(Style.menu_button)
 		self.b_addLS.setStyleSheet(Style.menu_button)
 		self.b_setting.setStyleSheet(Style.menu_button)
+		self.seriesl=self.get_pie_series()
+		self.seriesl.setLabelsVisible(True)
+		self.seriesl.setLabelsPosition(0)
+		self.chartl.removeAllSeries()
+		self.chartl.addSeries(self.seriesl)
+		self.chartl.update()
 	def b_addQ_onclick(self):
 		self.maintabs.setCurrentIndex(1)
 		if self.isextended==1:
@@ -1074,6 +1103,37 @@ class Ui_MainWindow(QMainWindow):
 		self.addQ_u_cbkonu.clear()
 		self.fill_cbkonu(self.addQ_u_cbkonu,self.addQ_u_cbders)
 
+#endregion
+#region anasayfa
+	def get_pie_series(self):
+		series=QPieSeries()
+		data=self.myclass.Soru_count()
+		for i in data:
+			series.append(i[1],i[0])
+		return series
+	def slice_clicked(self,slice):
+		for i in self.seriesl.slices():
+			i.setExploded(False)
+			i.setLabelPosition(0)
+		slice.setExploded(True)
+		slice.setLabelPosition(1)
+		self.seriess=self.get_pie_seriess(slice.label())
+		self.seriess.setLabelsVisible(True)
+		self.seriess.setLabelsPosition(0)
+		self.seriess.clicked.connect(self.slices_clicked)
+		self.charts.removeAllSeries()
+		self.charts.addSeries(self.seriess)
+		self.charts.update()
+	def get_pie_seriess(self,kad):
+		series=QPieSeries()
+		data=self.myclass.Konu_count(kad)
+		for i in data:
+			series.append(i[1],i[0])
+		return series
+	def slices_clicked(self,slice):
+		for i in self.seriess.slices():
+			i.setExploded(False)
+		slice.setExploded(True)
 #endregion
 
 app = QtWidgets.QApplication(sys.argv)

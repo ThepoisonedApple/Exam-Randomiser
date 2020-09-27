@@ -189,12 +189,29 @@ class Db_Class(object):
 			sql="SELECT soru.Soru_id,ders.Ders_adi,konu.Konu_adi,soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE soru.Soru_icerik LIKE %s AND konu.Konu_adi LIKE %s;"
 			val=(stext,konutext)
 			self.mycursor.execute(sql,val)
-			x=self.mycursor.fetchall()
-			print(x)		
+			x=self.mycursor.fetchall()	
 			return x
 		except Exception as e:
 			print(str(e))
 			raise e
+	def Soru_count(self):
+		try:
+			sql="SELECT COUNT(soru.Soru_id),ders.Ders_adi FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id GROUP BY Ders_adi"
+			self.mycursor.execute(sql)
+			x=self.mycursor.fetchall()	
+			return x
+		except Exception as e:
+			print(str(e))
+			raise e
+	def Konu_count(self,kad):
+		try:
+			sql="SELECT COUNT(konu.Konu_id),konu.Konu_adi FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_adi='"+kad+"' GROUP BY konu_adi"
+			self.mycursor.execute(sql)
+			x=self.mycursor.fetchall()	
+			return x
+		except Exception as e:
+			print(str(e))
+			raise e		
 #	def main(self):s
 #		self.Check_Db_Status()
 #		if self.Db_Status==1:
