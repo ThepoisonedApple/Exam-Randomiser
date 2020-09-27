@@ -186,12 +186,14 @@ class Db_Class(object):
 			raise e
 	def Soru_search(self,stext,konutext):
 		try:
-			sql="SELECT soru.Soru_id,ders.Ders_adi,konu.Konu_adi,soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE soru.Soru_icerik LIKE '%s' AND konu.Konu_adi LIKE '%s'"
-			val=("%"+stext+"%","%"+konutext+"%")
+			sql="SELECT soru.Soru_id,ders.Ders_adi,konu.Konu_adi,soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE soru.Soru_icerik LIKE %s AND konu.Konu_adi LIKE %s;"
+			val=(stext,konutext)
 			self.mycursor.execute(sql,val)
-			x=self.mycursor.fetchall()			
+			x=self.mycursor.fetchall()
+			print(x)		
 			return x
 		except Exception as e:
+			print(str(e))
 			raise e
 #	def main(self):s
 #		self.Check_Db_Status()

@@ -258,7 +258,7 @@ class Ui_MainWindow(QMainWindow):
 		self.addQ_i_binsert.setGeometry(QRect(750,315,70,30))
 		self.addQ_i_binsert.setStyleSheet(Style.ok_button)
 		self.addQ_i_binsert.setText("Ara")
-		#self.addQ_i_binsert.clicked.connect(self.Soru_ekle)
+		self.addQ_i_binsert.clicked.connect(self.soru_ara)
 
 	#endregion
 	#region insert question
@@ -1030,7 +1030,22 @@ class Ui_MainWindow(QMainWindow):
 			self.addQ_u_tbid.setText("")
 			self.activated_addQ_u_cbders()
 			self.b_addQ_onclick()
+	def soru_ara(self):
+		self.Q_table.clear()
+		self.Q_table.setHorizontalHeaderLabels(["ID","Ders Adı","Konu Adı","Soru"])
 
+		if self.addQ_s_tbkonu.text()=="":
+			konutext="%"
+		else:
+			konutext='%'+str(self.addQ_s_tbkonu.text())+'%'
+		if self.addQ_s_tbsoru.text()=="":
+			sorutext="%"
+		else:
+			sorutext='%'+str(self.addQ_s_tbsoru.text())+'%'
+		sorular=self.myclass.Soru_search(sorutext,konutext)
+		self.Q_table.setRowCount(len(sorular)+1)
+		print(sorular)
+		self.fill_table_soru(sorular)
 #endregion
 
 #region fill comboboxes
