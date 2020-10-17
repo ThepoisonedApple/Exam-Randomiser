@@ -1016,7 +1016,7 @@ class Ui_MainWindow(QMainWindow):
 	def mouseReleaseEvent(self, event):
 		self.old_Pos = None
 	def exit_onclick(self):
-		quit()
+		self.close()
 #endregion
 
 #region menu buttons extend functions
@@ -1125,7 +1125,7 @@ class Ui_MainWindow(QMainWindow):
 		if self.myclass.Db_Status==1:
 			self.get_data()
 			self.fill_cbders(self.home_cbders)
-			if len(self.List_Ders)>1 and len(self.List_Konu)>1 and len(self.myclass.Soru_get_all())>1:
+			if len(self.List_Ders)>=1 and len(self.List_Konu)>=1 and len(self.myclass.Soru_get_all())>=1:
 				self.update_piechartl()
 				self.update_piecharts()
 			else:
