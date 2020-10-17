@@ -1,7 +1,6 @@
-import mysql.connector
 from mysql.connector.errors import Error
-import configparser
-import os ,time
+import os ,time,configparser,mysql.connector
+from multipledispatch import dispatch 
 class Db_Class(object):
 	def __init__(self):
 		self.Db_name=""
@@ -146,9 +145,11 @@ class Db_Class(object):
 			raise e
 	def Konu_search(self,txt):
 		try:
-			sql="SELECT  konu.Konu_id,ders.Ders_adi,konu.Donem,konu.Konu_adi FROM ders INNER JOIN konu ON ders.Ders_id = konu.Ders_Konu_id WHERE  Konu_adi like '%"+txt+"%'"
-			self.mycursor.execute(sql)
-			x=self.mycursor.fetchall()			
+			txt="%"+txt+"%"
+			sql="SELECT  konu.Konu_id,ders.Ders_adi,konu.Donem,konu.Konu_adi FROM ders INNER JOIN konu ON ders.Ders_id = konu.Ders_Konu_id WHERE  Konu_adi like %s OR ders.Ders_adi like %s"
+			val=(txt,txt)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
 			return x
 		except Exception as e:
 			raise e
@@ -194,6 +195,7 @@ class Db_Class(object):
 		except Exception as e:
 			print(str(e))
 			raise e
+	@dispatch()
 	def Soru_count(self):
 		try:
 			sql="SELECT COUNT(soru.Soru_id),ders.Ders_adi FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id GROUP BY Ders_adi"
@@ -203,6 +205,18 @@ class Db_Class(object):
 		except Exception as e:
 			print(str(e))
 			raise e
+	@dispatch(int)
+	def Soru_count(self,kid):
+		try:
+			sql="SELECT COUNT(soru_id) FROM soru WHERE Soru_Konu_id=%s"
+			val=(kid,)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
+			return x[0][0]
+		except Exception as e:
+			print(str(e))
+			raise e
+	@dispatch(str)
 	def Konu_count(self,kad):
 		try:
 			sql="SELECT COUNT(konu.Konu_id),konu.Konu_adi FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_adi='"+kad+"' GROUP BY konu_adi"
@@ -211,21 +225,118 @@ class Db_Class(object):
 			return x
 		except Exception as e:
 			print(str(e))
+			raise e
+	@dispatch(int,int)
+	def Konu_count(self,did,donem):
+		try:
+			if donem==2:
+				sql="SELECT COUNT(konu.Konu_id) FROM `konu` WHERE Ders_Konu_id=%s"
+				val=(did,)
+			else:
+				sql="SELECT COUNT(konu.Konu_id) FROM `konu` INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s AND Donem=%s"
+				val=(did,donem)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
+			return x[0][0]
+		except Exception as e:
+			print(str(e))
+			raise e
+	def get_exams_subjects(self,did,donem):
+		try:
+			if int(donem)==2:
+				sql="SELECT Konu_id,Konu_adi FROM konu WHERE Ders_Konu_id=%s"
+				val=(did,)
+			else:
+				sql="SELECT Konu_id,Konu_adi FROM konu WHERE Ders_Konu_id=%s AND Donem=%s"
+				val=(did,donem)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()
+			return x
+		except Exception as e:
+			print(str(e))
+			raise e
+		
+	def check_exam_is_suitable(self,did,donem):
+		try:
+			if int(donem)==2:
+				sql="SELECT COUNT(soru.Soru_id) FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s"
+				val=(did,)
+			else:
+				sql="SELECT COUNT(soru.Soru_id) FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s AND Donem=%s"
+				val=(did,donem)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()
+			return int(x[0][0])
+		except Exception as e:
+			print(str(e))
+			raise e
+	@dispatch(int,int,int)
+	def get_random_exam(self,did,donem,sayi):
+		try:
+			if int(donem)==2:
+				sql="SELECT soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s ORDER BY RAND() LIMIT %s"
+				val=(did,sayi)
+			else:
+				sql="SELECT soru.Soru_icerik FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s AND Donem=%s ORDER BY RAND() LIMIT %s"
+				val=(did,donem,sayi)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
+			return x
+		except Exception as e:
+			print(str(e))
+			raise e	
+	@dispatch(int,int)
+	def get_random_exam(self,kid,sayi):
+		try:
+			sql="SELECT Soru_icerik,Soru_id FROM `soru` WHERE Soru_Konu_id=%s ORDER BY RAND() LIMIT %s"
+			val=(kid,sayi)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
+			return x
+		except Exception as e:
+			print(str(e))
+			raise e
+	@dispatch(int,int,list)
+	def get_random_exam(self,did,sayi,selectedquestions):
+		try:
+			print(sayi)
+			print(selectedquestions)
+			sql="SELECT soru.Soru_icerik,soru.Soru_id FROM `soru` INNER JOIN konu ON soru.Soru_Konu_id=konu.Konu_id INNER JOIN ders ON konu.Ders_Konu_id=ders.Ders_id WHERE Ders_id=%s AND soru.Soru_id NOT IN {} ORDER BY RAND() LIMIT %s".format(tuple(selectedquestions))
+			val=(did,sayi)
+			self.mycursor.execute(sql,val)
+			x=self.mycursor.fetchall()	
+			return x
+		except Exception as e:
+			print(str(e))
 			raise e		
-#	def main(self):s
-#		self.Check_Db_Status()
-#		if self.Db_Status==1:
-#			print("Db alive")
-#			#self.Ders_insert("MAT1")
-#			self.Ders_get()
-#		elif self.Db_Status==0:
-#			print("creating db")
-#			print(self.Db_Create())
-#			self.Check_Db_Status()
-#			print(self.Import_Db())
-#		elif self.Db_Status==-1:
-#			print("veritabanına bağlanılamadı. ip , kullanıcı adı ve şifrenin doğruluğunu kontrol ediniz.Veritabanınızın aktif olduğundan emin olunuz.")
-
-#myc=Db_Class()
-#myc.main()
-#print(myc.Db_Status)
+	def delete_soru(self,sid):
+		try:
+			sql="DELETE FROM `soru` WHERE `soru`.`Soru_id` = %s"
+			val=(sid,)
+			self.mycursor.execute(sql,val)
+			self.mydb.commit()
+			return 1
+		except Exception as e:
+			return e
+	def delete_konu(self,kid):
+		try:
+			sql="DELETE FROM soru WHERE Soru_Konu_id=%s"
+			val=(kid,)
+			self.mycursor.execute(sql,val)
+			self.mydb.commit()
+			sql="DELETE FROM konu WHERE Konu_id=%s"
+			val=(kid,)
+			self.mycursor.execute(sql,val)
+			self.mydb.commit()
+			return 1
+		except Exception as e:
+			return e
+	def delete_ders(self,did):
+		try:
+			sql="DELETE FROM ders WHERE ders.Ders_id=%s;"
+			val=(did,)
+			self.mycursor.execute(sql,val)
+			self.mydb.commit()
+			return 1
+		except Exception as e:
+			return e

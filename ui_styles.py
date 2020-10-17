@@ -1,11 +1,3 @@
-################################################################################
-##
-## BY: WANDERSON M.PIMENTA
-## PROJECT MADE WITH: Qt Designer and PySide2
-## V: 1.0.0
-##
-################################################################################
-
 class Style():
 
     table_style=("QTableWidget {    \n"
@@ -75,6 +67,22 @@ class Style():
     }
     QPushButton:pressed {
     background-color: rgb(85, 170, 255);
+
+    }
+        """)
+
+    delete_button=("""
+    QPushButton{
+    background-color: rgb(178,34,34);
+    border: 0px;
+    }
+
+    QPushButton:hover {
+    background-color: rgb(217, 58, 44);
+
+    }
+    QPushButton:pressed {
+    background-color: rgb(243,121,111);
 
     }
         """)
@@ -501,6 +509,7 @@ class Style():
     borderless_button=(
 """
     QPushButton {
+        color:White;
         border-bottom: 0px solid black;
         border-top: 0px solid rgb(33, 37, 43);
         background-color: rgb(27, 29, 35);
@@ -529,4 +538,47 @@ class Style():
         )
 
 
-        
+    mbox_style=(
+"""
+QDialog{
+        background:rgb(79, 87, 101);
+}
+    .QLabel{
+    padding-left:10px;
+    }
+    QString{
+    padding-left:10px;
+    }
+    .QPushButton{
+    background-color: rgb(55,188,155);
+    border: 1px;
+    margin:10px;
+    padding:10px;
+    }
+
+    .QPushButton:hover {
+    background-color: rgb(72,207,173);
+
+    }
+   .QPushButton:pressed {
+    background-color: rgb(85, 170, 255);
+
+    }
+
+"""
+        )
+    warning_button=("""
+    QPushButton{
+    background-color: rgb(251, 177, 36);
+    border: 0px;
+    }
+
+    QPushButton:hover {
+    background-color: rgb(252, 207, 62);
+
+    }
+    QPushButton:pressed {
+    background-color: rgb(255, 223, 119);
+
+    }
+        """)
